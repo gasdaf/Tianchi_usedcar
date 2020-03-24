@@ -1,2 +1,47 @@
-天池—二手车价格预测—探索性数据分析
-首先对整个
+#天池—二手车价格预测—探索性数据分析
+#首先导入数据处理和可视化相关的包
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+path1=r'D:\读研\kaggle\二手车数据预测\used_car_sample_submit.csv'
+path2=r'D:\读研\kaggle\二手车数据预测\used_car_testA_20200313.csv'
+path3=r'D:\读研\kaggle\二手车数据预测\used_car_train_20200313.csv'
+
+#导入数据
+sample_submit=pd.read_csv(path1)
+test_data=pd.read_csv(path2,sep=' ')
+train_data=pd.read_csv(path3,sep=' ')
+
+train.head()#粗略查看数据集
+'''
+	SaleID	name	regDate	model	brand	bodyType	fuelType	gearbox	power	kilometer	...	v_5	v_6	v_7	v_8	v_9	v_10	v_11	v_12	v_13	v_14
+0	0	736	20040402	30.0	6	1.0	0.0	0.0	60	12.5	...	0.235676	0.101988	0.129549	0.022816	0.097462	-2.881803	2.804097	-2.420821	0.795292	0.914762
+1	1	2262	20030301	40.0	1	2.0	0.0	0.0	0	15.0	...	0.264777	0.121004	0.135731	0.026597	0.020582	-4.900482	2.096338	-1.030483	-1.722674	0.245522
+2	2	14874	20040403	115.0	15	1.0	0.0	0.0	163	12.5	...	0.251410	0.114912	0.165147	0.062173	0.027075	-4.846749	1.803559	1.565330	-0.832687	-0.229963
+3	3	71865	19960908	109.0	10	0.0	0.0	1.0	193	15.0	...	0.274293	0.110300	0.121964	0.033395	0.000000	-4.509599	1.285940	-0.501868	-2.438353	-0.478699
+4	4	111080	20120103	110.0	5	1.0	0.0	0.0	68	5.0	...	0.228036	0.073205	0.091880	0.078819	0.121534	-1.896240	0.910783	0.931110	2.834518	1.923482
+5 rows × 31 columns
+'''
+
+train_data.isnull().mean()#查看缺失值情况
+'''
+model                0.000007
+brand                0.000000
+bodyType             0.030040
+fuelType             0.057867
+gearbox              0.039873
+'''
+
+#由于model是车型编码只存在0，1故用众数填充
+train_data['model'].fillna(train_data['model'].mode,inplace=True)
+
+#查看train和test的regDate，发现存在最大值
+train_data['regDate'].max()
+
+#将其int类型转为字符串类型转换为year、month、day
+train_data['regDate']=train_data['regDate'].astype(str)
+train_data['year']=train_data['regDate'].apply(lambda x: x[0:4])
+train_data['month']=train_data['regDate'].apply(lambda x: x[4:6])
+train_data['day']=train_data['regDate'].apply(lambda x: x[6:])
+
